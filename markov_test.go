@@ -1,6 +1,7 @@
 package markov_test
 
 import (
+	"fmt"
 	"strconv"
 	"testing"
 
@@ -18,6 +19,7 @@ func JSONTest(t *testing.T) {
 
 	data, err := chain.ToJSON()
 	assert.NoError(t, err)
+	fmt.Println(string(data))
 
 	_, err = markov.FromJSON(data)
 	assert.NoError(t, err)
