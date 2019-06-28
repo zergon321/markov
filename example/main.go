@@ -35,4 +35,20 @@ func main() {
 	}
 
 	fmt.Println(string(data))
+
+	restoredChain, err := markov.FromJSON(data)
+
+	if err != nil {
+		log.Fatalln("Couldn't restore the chain from JSON:", err)
+	}
+
+	for i := 0; i < 8; i++ {
+		for j := 0; j < 8; j++ {
+			probability, err := restoredChain.GetTransitionProbability("s"+strconv.Itoa(i), "s"+strconv.Itoa(j))
+
+			if err == nil {
+				fmt.Printf("s%d - s%d: %0.2f", i, j, probability)
+			}
+		}
+	}
 }
