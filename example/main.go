@@ -26,6 +26,8 @@ func main() {
 	chain.AddTransition("s3", "s6", 5)
 	chain.AddTransition("s5", "s7", 3)
 	chain.AddTransition("s6", "s7", 7)
+	chain.AddTransition("s5", "s6", 4)
+	chain.AddTransition("s5", "s5", 7)
 
 	// Output the chain.
 	data, err := chain.ToJSON()
