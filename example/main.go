@@ -13,7 +13,7 @@ func main() {
 
 	// Add states.
 	for i := 0; i < 8; i++ {
-		chain.AddEvent("s" + strconv.Itoa(i))
+		chain.AddState("s" + strconv.Itoa(i))
 	}
 
 	// Add transitions.

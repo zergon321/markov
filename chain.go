@@ -6,96 +6,96 @@ import (
 	"fmt"
 )
 
-// Chain represents a Markov's chain with events and their probabilities.
+// Chain represents a Markov's chain with states and their probabilities.
 type Chain struct {
-	edges  map[string]map[string]int64
-	totals map[string]int64
+	transitions map[string]map[string]int64
+	totals      map[string]int64
 }
 
 type chainExport struct {
-	Edges  map[string]map[string]int64
-	Totals map[string]int64
+	Transitions map[string]map[string]int64
+	Totals      map[string]int64
 }
 
 // CreateNew returns a new empty Markov's chain.
 func CreateNew() *Chain {
-	edges := make(map[string]map[string]int64, 0)
+	transitions := make(map[string]map[string]int64, 0)
 	totals := make(map[string]int64)
 
-	return &Chain{edges, totals}
+	return &Chain{transitions, totals}
 }
 
-// AddEvent adds a new event in the chain.
-func (chain *Chain) AddEvent(event string) error {
-	if _, ok := chain.edges[event]; ok {
-		return fmt.Errorf("Event %s already exists in the chain", event)
+// AddState adds a new state in the chain.
+func (chain *Chain) AddState(state string) error {
+	if _, ok := chain.transitions[state]; ok {
+		return fmt.Errorf("State %s already exists in the chain", state)
 	}
 
-	chain.edges[event] = make(map[string]int64, 0)
-	chain.totals[event] = 0
+	chain.transitions[state] = make(map[string]int64, 0)
+	chain.totals[state] = 0
 
 	return nil
 }
 
-// GetTransitionWeights returns a dictionary of transition weights for the event.
-func (chain *Chain) GetTransitionWeights(event string) (map[string]int64, error) {
-	if _, ok := chain.edges[event]; !ok {
-		return nil, fmt.Errorf("Event %s doesn't exist in the chain", event)
+// GetTransitionWeights returns a dictionary of transition weights for the state.
+func (chain *Chain) GetTransitionWeights(state string) (map[string]int64, error) {
+	if _, ok := chain.transitions[state]; !ok {
+		return nil, fmt.Errorf("State %s doesn't exist in the chain", state)
 	}
 
 	result := make(map[string]int64, 0)
 
-	for key, value := range chain.edges[event] {
+	for key, value := range chain.transitions[state] {
 		result[key] = value
 	}
 
 	return result, nil
 }
 
-// GetTransitionProbabilities returns a dictionary of transition probabilities for the event.
-func (chain *Chain) GetTransitionProbabilities(event string) (map[string]float64, error) {
-	if _, ok := chain.edges[event]; !ok {
-		return nil, fmt.Errorf("Event %s doesn't exist in the chain", event)
+// GetTransitionProbabilities returns a dictionary of transition probabilities for the state.
+func (chain *Chain) GetTransitionProbabilities(state string) (map[string]float64, error) {
+	if _, ok := chain.transitions[state]; !ok {
+		return nil, fmt.Errorf("State %s doesn't exist in the chain", state)
 	}
 
 	result := make(map[string]float64, 0)
 
-	for key, value := range chain.edges[event] {
-		result[key] = float64(value) / float64(chain.totals[event])
+	for key, value := range chain.transitions[state] {
+		result[key] = float64(value) / float64(chain.totals[state])
 	}
 
 	return result, nil
 }
 
-// RemoveEvent removes all the occurences of the given event from the Markov's chain.
-func (chain *Chain) RemoveEvent(event string) error {
-	if _, ok := chain.edges[event]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", event)
+// RemoveState removes all the occurences of the given State from the Markov's chain.
+func (chain *Chain) RemoveState(state string) error {
+	if _, ok := chain.transitions[state]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", state)
 	}
 
-	// Delete an event from other events' transitions.
-	for key := range chain.edges {
-		chain.RemoveTransition(key, event)
+	// Delete a state from other states' transitions.
+	for key := range chain.transitions {
+		chain.RemoveTransition(key, state)
 	}
 
-	// Delete an event.
-	delete(chain.edges, event)
-	delete(chain.totals, event)
+	// Delete an State.
+	delete(chain.transitions, state)
+	delete(chain.totals, state)
 
 	return nil
 }
 
-// AddTransition adds a new transition from one event to another in the chain.
+// AddTransition adds a new transition from one state to another in the chain.
 func (chain *Chain) AddTransition(outgoing string, incoming string, weight int64) error {
-	if _, ok := chain.edges[outgoing]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", outgoing)
+	if _, ok := chain.transitions[outgoing]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", outgoing)
 	}
 
-	if _, ok := chain.edges[incoming]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", incoming)
+	if _, ok := chain.transitions[incoming]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", incoming)
 	}
 
-	if _, ok := chain.edges[outgoing][incoming]; ok {
+	if _, ok := chain.transitions[outgoing][incoming]; ok {
 		return fmt.Errorf("The transition from %s to %s already exists in the chain", outgoing, incoming)
 	}
 
@@ -103,7 +103,7 @@ func (chain *Chain) AddTransition(outgoing string, incoming string, weight int64
 		return errors.New("Weight should be above zero")
 	}
 
-	chain.edges[outgoing][incoming] = weight
+	chain.transitions[outgoing][incoming] = weight
 	chain.totals[outgoing] += weight
 
 	return nil
@@ -111,56 +111,56 @@ func (chain *Chain) AddTransition(outgoing string, incoming string, weight int64
 
 // GetTransitionWeight returns a weight of the specified transition.
 func (chain *Chain) GetTransitionWeight(outgoing string, incoming string) (int64, error) {
-	if _, ok := chain.edges[outgoing]; !ok {
-		return 0, fmt.Errorf("Event %s doesn't exist in the chain", outgoing)
+	if _, ok := chain.transitions[outgoing]; !ok {
+		return 0, fmt.Errorf("State %s doesn't exist in the chain", outgoing)
 	}
 
-	if _, ok := chain.edges[incoming]; !ok {
-		return 0, fmt.Errorf("Event %s doesn't exist in the chain", incoming)
+	if _, ok := chain.transitions[incoming]; !ok {
+		return 0, fmt.Errorf("State %s doesn't exist in the chain", incoming)
 	}
 
-	if _, ok := chain.edges[outgoing][incoming]; !ok {
+	if _, ok := chain.transitions[outgoing][incoming]; !ok {
 		return 0, fmt.Errorf("The transition from %s to %s doesn't exist in the chain", outgoing, incoming)
 	}
 
-	return chain.edges[outgoing][incoming], nil
+	return chain.transitions[outgoing][incoming], nil
 }
 
 // GetTransitionProbability returns a probability of the specified transition
 func (chain *Chain) GetTransitionProbability(outgoing string, incoming string) (float64, error) {
-	if _, ok := chain.edges[outgoing]; !ok {
-		return 0, fmt.Errorf("Event %s doesn't exist in the chain", outgoing)
+	if _, ok := chain.transitions[outgoing]; !ok {
+		return 0, fmt.Errorf("State %s doesn't exist in the chain", outgoing)
 	}
 
-	if _, ok := chain.edges[incoming]; !ok {
-		return 0, fmt.Errorf("Event %s doesn't exist in the chain", incoming)
+	if _, ok := chain.transitions[incoming]; !ok {
+		return 0, fmt.Errorf("State %s doesn't exist in the chain", incoming)
 	}
 
-	if _, ok := chain.edges[outgoing][incoming]; !ok {
+	if _, ok := chain.transitions[outgoing][incoming]; !ok {
 		return 0, fmt.Errorf("The transition from %s to %s doesn't exist in the chain", outgoing, incoming)
 	}
 
-	return float64(chain.edges[outgoing][incoming]) / float64(chain.totals[outgoing]), nil
+	return float64(chain.transitions[outgoing][incoming]) / float64(chain.totals[outgoing]), nil
 }
 
 // UpdateTransition changes the weight value of the existing transition.
 func (chain *Chain) UpdateTransition(outgoing string, incoming string, weight int64) error {
-	if _, ok := chain.edges[outgoing]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", outgoing)
+	if _, ok := chain.transitions[outgoing]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", outgoing)
 	}
 
-	if _, ok := chain.edges[incoming]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", incoming)
+	if _, ok := chain.transitions[incoming]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", incoming)
 	}
 
-	if _, ok := chain.edges[outgoing][incoming]; !ok {
+	if _, ok := chain.transitions[outgoing][incoming]; !ok {
 		return fmt.Errorf("The transition from %s to %s doesn't exist in the chain", outgoing, incoming)
 	}
 
-	oldWeight := chain.edges[outgoing][incoming]
+	oldWeight := chain.transitions[outgoing][incoming]
 	chain.totals[outgoing] -= oldWeight
 
-	chain.edges[outgoing][incoming] = weight
+	chain.transitions[outgoing][incoming] = weight
 	chain.totals[outgoing] += weight
 
 	return nil
@@ -168,27 +168,27 @@ func (chain *Chain) UpdateTransition(outgoing string, incoming string, weight in
 
 // RemoveTransition removes the transition from the outgoing state to the incoming state.
 func (chain *Chain) RemoveTransition(outgoing string, incoming string) error {
-	if _, ok := chain.edges[outgoing]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", outgoing)
+	if _, ok := chain.transitions[outgoing]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", outgoing)
 	}
 
-	if _, ok := chain.edges[incoming]; !ok {
-		return fmt.Errorf("Event %s doesn't exist in the chain", incoming)
+	if _, ok := chain.transitions[incoming]; !ok {
+		return fmt.Errorf("State %s doesn't exist in the chain", incoming)
 	}
 
-	if _, ok := chain.edges[outgoing][incoming]; !ok {
+	if _, ok := chain.transitions[outgoing][incoming]; !ok {
 		return fmt.Errorf("The transition from %s to %s doesn't exist in the chain", outgoing, incoming)
 	}
 
-	chain.totals[outgoing] -= chain.edges[outgoing][incoming]
-	delete(chain.edges[outgoing], incoming)
+	chain.totals[outgoing] -= chain.transitions[outgoing][incoming]
+	delete(chain.transitions[outgoing], incoming)
 
 	return nil
 }
 
 // ToJSON serializes the Markov's chain to JSON format.
 func (chain *Chain) ToJSON() ([]byte, error) {
-	input := chainExport{chain.edges, chain.totals}
+	input := chainExport{chain.transitions, chain.totals}
 	data, err := json.MarshalIndent(input, "", "    ")
 
 	if err != nil {
@@ -207,5 +207,5 @@ func FromJSON(data []byte) (*Chain, error) {
 		return nil, err
 	}
 
-	return &Chain{input.Edges, input.Totals}, nil
+	return &Chain{input.Transitions, input.Totals}, nil
 }

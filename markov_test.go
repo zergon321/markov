@@ -13,7 +13,7 @@ func JSONTest(t *testing.T) {
 	chain := markov.CreateNew()
 
 	for i := 0; i < 8; i++ {
-		chain.AddEvent("s" + strconv.Itoa(i))
+		chain.AddState("s" + strconv.Itoa(i))
 	}
 
 	data, err := chain.ToJSON()
