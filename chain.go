@@ -196,7 +196,7 @@ func (chain *Chain) ToJSON() ([]byte, error) {
 // FromJSON creates a new Markov's chain from its JSON representation.
 func FromJSON(data []byte) (*Chain, error) {
 	var input []interface{}
-	err := json.Unmarshal(data, input)
+	err := json.Unmarshal(data, &input)
 
 	if err != nil {
 		return nil, err
