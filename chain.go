@@ -37,6 +37,13 @@ func (chain *Chain) AddState(state string) error {
 	return nil
 }
 
+// HasState returns 'true' if the specified state exists in the chain and 'false' otherwise.
+func (chain *Chain) HasState(state string) bool {
+	_, ok := chain.transitions[state]
+
+	return ok
+}
+
 // GetTransitionWeights returns a dictionary of transition weights for the state.
 func (chain *Chain) GetTransitionWeights(state string) (map[string]int64, error) {
 	if _, ok := chain.transitions[state]; !ok {
@@ -107,6 +114,20 @@ func (chain *Chain) AddTransition(outgoing string, incoming string, weight int64
 	chain.totals[outgoing] += weight
 
 	return nil
+}
+
+// HasTransition returns 'true' if transition exists in the chain and 'false' otherwise.
+func (chain *Chain) HasTransition(outgoing string, incoming string) bool {
+	_, outgoingExists := chain.transitions[outgoing]
+	_, incomingExists := chain.transitions[incoming]
+
+	if outgoingExists && incomingExists {
+		_, ok := chain.transitions[outgoing][incoming]
+
+		return ok
+	}
+
+	return false
 }
 
 // GetTransitionWeight returns a weight of the specified transition.

@@ -53,4 +53,9 @@ func main() {
 			}
 		}
 	}
+
+	fmt.Println(restoredChain.HasState("s0"))
+	fmt.Println(restoredChain.HasState("s8"))
+	fmt.Println(restoredChain.HasTransition("s3", "s6"))
+	fmt.Println(restoredChain.HasTransition("s4", "s5"))
 }
