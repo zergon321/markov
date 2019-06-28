@@ -47,7 +47,7 @@ func main() {
 			probability, err := restoredChain.GetTransitionProbability("s"+strconv.Itoa(i), "s"+strconv.Itoa(j))
 
 			if err == nil {
-				fmt.Printf("s%d - s%d: %0.2f", i, j, probability)
+				fmt.Printf("s%d - s%d: %0.2f\n", i, j, probability)
 			}
 		}
 	}

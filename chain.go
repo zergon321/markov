@@ -12,6 +12,11 @@ type Chain struct {
 	totals map[string]int64
 }
 
+type chainExport struct {
+	Edges  map[string]map[string]int64
+	Totals map[string]int64
+}
+
 // CreateNew returns a new empty Markov's chain.
 func CreateNew() *Chain {
 	edges := make(map[string]map[string]int64, 0)
@@ -183,7 +188,7 @@ func (chain *Chain) RemoveTransition(outgoing string, incoming string) error {
 
 // ToJSON serializes the Markov's chain to JSON format.
 func (chain *Chain) ToJSON() ([]byte, error) {
-	input := []interface{}{chain.edges, chain.totals}
+	input := chainExport{chain.edges, chain.totals}
 	data, err := json.MarshalIndent(input, "", "    ")
 
 	if err != nil {
@@ -195,12 +200,12 @@ func (chain *Chain) ToJSON() ([]byte, error) {
 
 // FromJSON creates a new Markov's chain from its JSON representation.
 func FromJSON(data []byte) (*Chain, error) {
-	var input []interface{}
+	var input chainExport
 	err := json.Unmarshal(data, &input)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &Chain{input[0].(map[string]map[string]int64), input[1].(map[string]int64)}, nil
+	return &Chain{input.Edges, input.Totals}, nil
 }
