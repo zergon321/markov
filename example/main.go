@@ -71,4 +71,7 @@ func main() {
 
 		fmt.Printf("s3 -> %s\n", nextState)
 	}
+
+	val, err := chain.Transit("s7")
+	fmt.Println(val == "", err)
 }

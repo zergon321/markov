@@ -51,11 +51,16 @@ func (chain *Chain) GetAllStates() []string {
 }
 
 // Transit returns a new state for the system by the current state.
+// Returns an empty string if the current state is terminal.
 func (chain *Chain) Transit(state string) (string, error) {
 	var (
 		max  float64
 		next string
 	)
+
+	if _, ok := chain.transitions[state]; !ok {
+		return "", fmt.Errorf("State %s doesn't exist in the chain", state)
+	}
 
 	probabilities, err := chain.GetTransitionProbabilities(state)
 
