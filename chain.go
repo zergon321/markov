@@ -37,6 +37,17 @@ func (chain *Chain) AddState(state string) error {
 	return nil
 }
 
+// GetAllStates returns a slice of the all states stored in the chain.
+func (chain *Chain) GetAllStates() []string {
+	states := make([]string, 0)
+
+	for state := range chain.totals {
+		states = append(states, state)
+	}
+
+	return states
+}
+
 // HasState returns 'true' if the specified state exists in the chain and 'false' otherwise.
 func (chain *Chain) HasState(state string) bool {
 	_, ok := chain.transitions[state]
