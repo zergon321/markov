@@ -59,4 +59,16 @@ func main() {
 	fmt.Println(restoredChain.HasTransition("s3", "s6"))
 	fmt.Println(restoredChain.HasTransition("s4", "s5"))
 	fmt.Println(restoredChain.GetAllStates())
+	fmt.Println(restoredChain.GetTransitionProbabilities("s3"))
+
+	// Transits.
+	for i := 0; i < 100; i++ {
+		nextState, err := chain.Transit("s3")
+
+		if err != nil {
+			log.Fatalln("Couldn't go to a new state:", err)
+		}
+
+		fmt.Printf("s3 -> %s\n", nextState)
+	}
 }

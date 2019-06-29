@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 // Chain represents a Markov's chain with states and their probabilities.
@@ -46,6 +48,34 @@ func (chain *Chain) GetAllStates() []string {
 	}
 
 	return states
+}
+
+// Transit returns a new state for the system by the current state.
+func (chain *Chain) Transit(state string) (string, error) {
+	var (
+		max  float64
+		next string
+	)
+
+	probabilities, err := chain.GetTransitionProbabilities(state)
+
+	if err != nil {
+		return "", err
+	}
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	// Multiply all the probabilities by random number and set the state with max probability as the next state.
+	for key := range probabilities {
+		temp := probabilities[key] * rand.Float64()
+
+		if temp > max {
+			max = temp
+			next = key
+		}
+	}
+
+	return next, nil
 }
 
 // HasState returns 'true' if the specified state exists in the chain and 'false' otherwise.
